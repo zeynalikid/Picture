@@ -1,0 +1,702 @@
+﻿بر اساس تحقیقات عمیق وب انجام‌شده، پاسخ جامع و کامل را در قالب یک فایل Markdown آماده کردم:
+
+---
+
+```markdown
+# 🤖 راه‌حل صفر هزینه برای اتوماسیون اینستاگرام روی Vercel + Supabase
+## (معماری کامل برای @zeynalikids — اکتبر ۲۰۲۶)
+
+> **نقش محقق:** معمار ارشد نرم‌افزار + متخصص اتوماسیون شبکه‌های اجتماعی  
+> **منابع:** بررسی مستقیم صفحات قیمت‌گذاری، داکیومنت‌های API و مقایسه‌های مستقل ۲۰۲۶
+
+---
+
+## ⚡ خلاصه اجرایی (TL;DR)
+
+| مشکل | راه‌حل صفر هزینه |
+|-------|-----------------|
+| جایگزین ChatbotX | **SocialAPI.ai Hobby Plan (رایگان)** |
+| دریافت پیام از اینستاگرام | **Webhook → Vercel FastAPI** |
+| تولید پاسخ | **Gemini Flash 2.0 (رایگان)** |
+| ذخیره صف پیام | **Supabase (رایگان)** |
+| ارسال پاسخ | **SocialAPI.ai (تا ۵۰ تعامل رایگان/ماه) + Zernio Inbox (تا ۱۰k پیام رایگان)** |
+
+---
+
+## 📊 جدول مقایسه‌ای ۳ گزینه برتر (وضعیت اکتبر ۲۰۲۶)
+
+| ویژگی | 🥇 SocialAPI.ai | 🥈 Zernio (فعلی شما) | 🥉 Ayrshare |
+|--------|----------------|---------------------|------------|
+| **قیمت پلن رایگان** | $0/ماه (همیشگی) | $0 (تا ۲ حساب) | **ندارد** |
+| **پلن اول پولی** | $29/ماه (10 برند) | $6/حساب (حساب ۳ به بعد) | $149/ماه |
+| **Inbox (DM + Comment)** | ✅ رایگان (خواندن نامحدود) | ✅ (محدود ۱۰k ارسال/ماه) | ❌ فقط پولی |
+| **Webhook** | ✅ در پلن رایگان | ✅ | ✅ فقط Launch ($299) |
+| **API در پلن رایگان** | ✅ کامل | ✅ کامل | ❌ |
+| **محدودیت تعامل رایگان** | ۵۰ تعامل/ماه (ارسال) | ۱۰,۰۰۰ پیام/ماه (ارسال) | N/A |
+| **خواندن پیام رایگان** | ✅ نامحدود | ✅ | ❌ |
+| **MCP Server** | ✅ (75+ ابزار) | ✅ | ✅ |
+| **پلتفرم‌های پشتیبانی** | ۸ (IG, FB, TikTok, ...) | ۱۵+ | ۱۳ |
+| **مناسب برای ما؟** | ✅ بله (با هوشمند‌سازی) | ✅ بله (فعلاً دارید) | ❌ خیر |
+| **لینک** | [social-api.ai](https://social-api.ai) | [zernio.com](https://zernio.com) | [ayrshare.com](https://ayrshare.com) |
+
+> **منابع:**
+> - [Free Social Media API 2026 — social-api.ai](https://social-api.ai/blog/free-social-media-api-2026)
+> - [Zernio Instagram API Pricing](https://zernio.com/blog/api-to-post-to-instagram)
+> - [Ayrshare Pricing 2026 — social-api.ai](https://social-api.ai/blog/ayrshare-pricing-social-media-api-2026)
+
+---
+
+## 🔍 پاسخ تفصیلی به هر سوال
+
+### ❓ سوال ۱: جایگزین کاملاً رایگان ChatbotX
+
+#### وضعیت دقیق پلتفرم‌ها در اکتبر ۲۰۲۶:
+
+**✅ SocialAPI.ai — بهترین گزینه**
+- پلن Hobby: رایگان همیشگی، بدون نیاز به کارت اعتباری
+- ۲ برند، ۱۰ پست/ماه، **۵۰ تعامل (ارسال)/ماه**
+- **خواندن کامنت، DM، mentions: نامحدود و رایگان**
+- Webhook در پلن رایگان
+- MCP Server با ۷۵+ ابزار
+- پلتفرم‌ها: Instagram, Facebook, Threads, TikTok, Google, LinkedIn, YouTube, X
+
+> ⚠️ **محدودیت کلیدی:** فقط ۵۰ تعامل ارسالی/ماه رایگان. یعنی ۵۰ پاسخ کامنت یا DM. بیشتر از آن → پلن $29/ماه.
+
+**✅ Zernio Inbox (که الان دارید)**
+- ۱۰,۰۰۰ پیام ارسالی/ماه رایگان
+- بعد از آن: $1 به ازای هر ۱۰,۰۰۰ پیام اضافی
+- ۲ حساب اول کاملاً رایگان با تمام قابلیت‌ها
+
+**❌ Publer**
+- پلن رایگان: ۳ حساب، ۱۰ پست/حساب، **بدون Inbox/DM**
+- API فقط در Business ($21+/ماه)
+
+**❌ Ayrshare**
+- پلن رایگان در ۲۰۲۶ وجود ندارد (فقط ۲۸ روز trial)
+- Inbox فقط از Premium ($149/ماه)
+
+**❌ Metricool**
+- پلن رایگان: ۱ برند، ۲۰ پست/ماه، Inbox رایگان دارد ولی **API فقط از Advanced ($67/ماه)**
+- برای برنامه‌نویسی مستقیم مناسب نیست
+
+---
+
+### ❓ سوال ۲: استفاده از API رسمی اینستاگرام بدون اپ متا
+
+**پاسخ کوتاه: بله، از طریق واسطه‌های تأییدشده ممکن است.**
+
+زیرا سرویس‌هایی مثل Zernio و SocialAPI.ai، خودشان اپ Meta دارند و شما از طریق OAuth به آن‌ها متصل می‌شوید. **شما نیازی به ساخت اپ متا ندارید.**
+
+```
+جریان احراز هویت:
+شما (ایران) → OAuth Zernio/SocialAPI.ai → Meta Graph API
+                ↓
+         API Key به شما داده می‌شود
+         (نه Meta App مستقیم)
+```
+
+**Zernio Webhook برای اینستاگرام:**
+- هر event کامنت از طریق Normalized Webhook ارسال می‌شود
+- شما endpoint روی Vercel تعریف می‌کنید
+- Zernio پیام را push می‌کند (نه polling)
+
+> ⚠️ **توجه:** ثبت‌نام در Zernio/SocialAPI.ai از ایران نیاز به VPN دارد، اما بعد از ثبت‌نام، استفاده از API از سرور Vercel (که IP ایرانی ندارد) بدون مشکل است.
+
+---
+
+### ❓ سوال ۳: معماری Serverless کاملاً رایگان
+
+#### 🏗️ معماری پیشنهادی بهینه (Zero Cost Architecture)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    ZERO COST ARCHITECTURE                       │
+│                    (Vercel + Supabase + SocialAPI.ai)           │
+└─────────────────────────────────────────────────────────────────┘
+
+[اینستاگرام کاربر کامنت/DM می‌زند]
+         │
+         ▼
+[SocialAPI.ai/Zernio دریافت می‌کند]
+         │
+         │ Webhook POST (رایگان)
+         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  Vercel Serverless Function: /api/webhook/instagram             │
+│  (FastAPI)                                                      │
+│                                                                 │
+│  1. پیام دریافت می‌شود                                          │
+│  2. اسپم‌فیلتر اجرا می‌شود ← [SPAM FILTER LAYER]               │
+│  3. در صف Supabase ذخیره می‌شود                                 │
+│  4. پاسخ 200 OK برمی‌گردد (سریع)                                │
+└─────────────────────────────────────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  Supabase PostgreSQL (رایگان - 500MB)                           │
+│                                                                 │
+│  Table: message_queue                                           │
+│  - id, platform, sender_id, message_text                        │
+│  - created_at, status (pending/processed/spam/blocked)          │
+│  - priority (high/normal/low)                                   │
+│  - monthly_send_count (شمارنده ماهانه)                          │
+│                                                                 │
+│  Table: blocked_senders (بلاک‌لیست)                             │
+│  Table: monthly_stats (آمار مصرف)                               │
+└─────────────────────────────────────────────────────────────────┘
+         │
+         │ Supabase pg_cron (هر X دقیقه) یا Vercel Cron
+         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  Vercel Serverless Function: /api/process-queue                 │
+│  (اجرا توسط Vercel Cron Job - رایگان)                           │
+│                                                                 │
+│  1. پیام‌های pending را از Supabase می‌خواند                     │
+│  2. به Gemini Flash 2.0 API ارسال می‌کند (رایگان)               │
+│  3. پاسخ تولید می‌شود                                            │
+│  4. به SocialAPI.ai/Zernio ارسال می‌شود (ارسال پاسخ)            │
+│  5. وضعیت در Supabase به processed تغییر می‌کند                  │
+└─────────────────────────────────────────────────────────────────┘
+         │
+         ▼
+[اینستاگرام - کاربر پاسخ دریافت می‌کند]
+```
+
+#### کد نمونه Webhook Handler (FastAPI روی Vercel)
+
+```python
+# api/webhook/instagram.py
+from fastapi import FastAPI, Request, HTTPException
+from supabase import create_client
+import hashlib
+import os
+
+app = FastAPI()
+supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+
+SPAM_KEYWORDS = ["follow for follow", "f4f", "spam_keyword"]
+MAX_MSGS_PER_USER_PER_DAY = 5
+
+@app.post("/api/webhook/instagram")
+async def instagram_webhook(request: Request):
+    # ۱. تأیید امضای Webhook
+    body = await request.body()
+    signature = request.headers.get("X-Webhook-Signature", "")
+    expected = hashlib.sha256(
+        f"{os.getenv('WEBHOOK_SECRET')}{body.decode()}".encode()
+    ).hexdigest()
+    if signature != f"sha256={expected}":
+        raise HTTPException(status_code=401, detail="Invalid signature")
+
+    data = await request.json()
+    
+    # ۲. استخراج اطلاعات پیام
+    event_type = data.get("event")  # "comment.received" or "dm.received"
+    sender_id = data.get("sender", {}).get("id")
+    message_text = data.get("text", "")
+    
+    # ۳. لایه فیلتر اسپم
+    if await is_spam(sender_id, message_text):
+        return {"status": "filtered", "reason": "spam"}
+    
+    # ۴. بررسی محدودیت ماهانه ارسال
+    monthly_count = await get_monthly_send_count()
+    if monthly_count >= 9500:  # بافر ۵۰۰ تایی قبل از ۱۰k
+        # فقط ذخیره می‌کنیم، ارسال نمی‌کنیم
+        await save_to_queue(sender_id, message_text, event_type, priority="deferred")
+        return {"status": "queued_deferred"}
+    
+    # ۵. ذخیره در صف
+    await save_to_queue(sender_id, message_text, event_type, priority="normal")
+    
+    return {"status": "queued"}
+
+async def is_spam(sender_id: str, text: str) -> bool:
+    # بررسی بلاک‌لیست
+    result = supabase.table("blocked_senders").select("id").eq("sender_id", sender_id).execute()
+    if result.data:
+        return True
+    
+    # بررسی کلمات اسپم
+    text_lower = text.lower()
+    if any(keyword in text_lower for keyword in SPAM_KEYWORDS):
+        return True
+    
+    # بررسی تعداد پیام در روز (جلوگیری از flood)
+    from datetime import datetime, timedelta
+    today = datetime.now().date().isoformat()
+    result = supabase.table("message_queue")\
+        .select("id")\
+        .eq("sender_id", sender_id)\
+        .gte("created_at", today)\
+        .execute()
+    if len(result.data) >= MAX_MSGS_PER_USER_PER_DAY:
+        return True
+    
+    return False
+
+async def get_monthly_send_count() -> int:
+    from datetime import datetime
+    month_start = datetime.now().replace(day=1).date().isoformat()
+    result = supabase.table("message_queue")\
+        .select("id")\
+        .eq("status", "processed")\
+        .gte("created_at", month_start)\
+        .execute()
+    return len(result.data)
+
+async def save_to_queue(sender_id, text, event_type, priority="normal"):
+    supabase.table("message_queue").insert({
+        "sender_id": sender_id,
+        "message_text": text,
+        "event_type": event_type,
+        "status": "pending",
+        "priority": priority
+    }).execute()
+```
+
+#### کد نمونه Queue Processor (Vercel Cron)
+
+```python
+# api/process-queue.py
+import os
+import httpx
+from supabase import create_client
+import google.generativeai as genai
+
+supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+SYSTEM_PROMPT = """
+تو دستیار برند کودک @zeynalikids هستی.
+- پاسخ‌ها باید مودبانه، کوتاه (زیر ۱۵۰ کاراکتر) و به فارسی باشند.
+- از ایموجی مناسب استفاده کن.
+- اگر سوال درباره قیمت است، بگو 'لطفاً DM بدید'.
+- هرگز اطلاعات شخصی نده.
+"""
+
+async def process_queue():
+    # ۱. دریافت پیام‌های pending (batch 10 تایی)
+    result = supabase.table("message_queue")\
+        .select("*")\
+        .eq("status", "pending")\
+        .order("created_at")\
+        .limit(10)\
+        .execute()
+    
+    messages = result.data
+    if not messages:
+        return {"processed": 0}
+    
+    model = genai.GenerativeModel("gemini-1.5-flash")
+    
+    for msg in messages:
+        try:
+            # ۲. تولید پاسخ با Gemini
+            response = model.generate_content(
+                f"{SYSTEM_PROMPT}\n\nپیام کاربر: {msg['message_text']}"
+            )
+            reply_text = response.text.strip()
+            
+            # ۳. ارسال پاسخ از طریق SocialAPI.ai یا Zernio
+            await send_reply(msg, reply_text)
+            
+            # ۴. بروزرسانی وضعیت
+            supabase.table("message_queue")\
+                .update({"status": "processed", "reply_text": reply_text})\
+                .eq("id", msg["id"])\
+                .execute()
+                
+        except Exception as e:
+            supabase.table("message_queue")\
+                .update({"status": "error", "error_message": str(e)})\
+                .eq("id", msg["id"])\
+                .execute()
+    
+    return {"processed": len(messages)}
+
+async def send_reply(msg: dict, reply_text: str):
+    """
+    استراتژی دوگانه:
+    - اگر مصرف ماهانه < 10k: از Zernio استفاده می‌کنیم (رایگان‌تر)
+    - اگر مصرف ماهانه > 9500: به SocialAPI.ai برمی‌گردیم (۵۰ رایگان)
+    """
+    monthly_count = await get_monthly_send_count()
+    
+    if monthly_count < 9500:
+        # Zernio Inbox API
+        async with httpx.AsyncClient() as client:
+            if msg["event_type"] == "comment.received":
+                await client.post(
+                    "https://api.zernio.com/v1/comments/reply",
+                    headers={"Authorization": f"Bearer {os.getenv('ZERNIO_API_KEY')}"},
+                    json={
+                        "comment_id": msg["platform_message_id"],
+                        "text": reply_text
+                    }
+                )
+            elif msg["event_type"] == "dm.received":
+                await client.post(
+                    "https://api.zernio.com/v1/messages/send",
+                    headers={"Authorization": f"Bearer {os.getenv('ZERNIO_API_KEY')}"},
+                    json={
+                        "conversation_id": msg["conversation_id"],
+                        "text": reply_text
+                    }
+                )
+    else:
+        # SocialAPI.ai (backup)
+        async with httpx.AsyncClient() as client:
+            await client.post(
+                "https://api.social-api.ai/v1/inbox/reply",
+                headers={"Authorization": f"Bearer {os.getenv('SOCIALAPI_KEY')}"},
+                json={
+                    "interaction_id": msg["platform_message_id"],
+                    "text": reply_text
+                }
+            )
+```
+
+---
+
+### ❓ سوال ۴: مدیریت صف برای زیر ۱۰,۰۰۰ پیام/ماه
+
+#### استراتژی‌های کاهش مصرف
+
+**حساب کتاب واقعی:**
+```
+۵۰۰ پیام/روز × ۳۰ روز = ۱۵,۰۰۰ پیام/ماه (بدون فیلتر)
+هدف: زیر ۱۰,۰۰۰ پیام/ماه = حذف ۳۳% پیام‌ها
+```
+
+**لایه‌های فیلتر (به ترتیب اثربخشی):**
+
+| لایه | تکنیک | کاهش تخمینی | پیاده‌سازی |
+|-------|--------|-------------|-----------|
+| **۱. بلاک‌لیست** | بلاک کردن سندرهای مکرر بی‌ربط | ۱۵-۲۰% | جدول `blocked_senders` |
+| **۲. Dedup** | بررسی پیام‌های یکسان ظرف ۵ دقیقه | ۵-۱۰% | Hash پیام + timestamp |
+| **۳. Rate Limit** | حداکثر ۳ پاسخ به هر کاربر/روز | ۱۰-۱۵% | شمارنده روزانه در Supabase |
+| **۴. Keyword Filter** | رد پیام‌های spam/emoji-only/کمتر از ۵ کاراکتر | ۱۰-۱۵% | Regex |
+| **۵. Priority Queue** | فقط به پیام‌های با keyword مهم پاسخ دهید | انتخابی | امتیازدهی |
+
+**قابلیت‌های Zernio برای کمک:**
+
+Zernio از طریق API امکان خواندن پیام‌ها را می‌دهد. فیلترینگ هوشمند باید در لایه Vercel شما انجام شود چون Zernio خودش ابزار بلاک داخلی منتشرشده‌ای برای این کار ارائه نمی‌دهد. اما Zernio برای هر event از طریق Webhook به شما اطلاع می‌دهد و شما می‌توانید قبل از پاسخ دادن، فیلتر کنید.
+
+**SQL Schema پیشنهادی در Supabase:**
+
+```sql
+-- جدول صف پیام‌ها
+CREATE TABLE message_queue (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    sender_id TEXT NOT NULL,
+    message_text TEXT NOT NULL,
+    message_hash TEXT,  -- برای deduplication
+    event_type TEXT,    -- 'comment.received' or 'dm.received'
+    platform_message_id TEXT,
+    conversation_id TEXT,
+    status TEXT DEFAULT 'pending', -- pending/processed/spam/blocked/deferred
+    priority TEXT DEFAULT 'normal', -- high/normal/low/deferred
+    reply_text TEXT,
+    error_message TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    processed_at TIMESTAMPTZ
+);
+
+-- جدول بلاک‌لیست
+CREATE TABLE blocked_senders (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    sender_id TEXT UNIQUE NOT NULL,
+    reason TEXT,
+    blocked_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- جدول آمار ماهانه (برای کنترل ۱۰k)
+CREATE TABLE monthly_stats (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    year_month TEXT NOT NULL,  -- '2026-10'
+    messages_sent INTEGER DEFAULT 0,
+    messages_filtered INTEGER DEFAULT 0,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Index برای کارایی
+CREATE INDEX idx_queue_status ON message_queue(status, created_at);
+CREATE INDEX idx_queue_sender ON message_queue(sender_id, created_at);
+CREATE INDEX idx_queue_hash ON message_queue(message_hash);
+
+-- تابع deduplication
+CREATE OR REPLACE FUNCTION is_duplicate_message(
+    p_sender_id TEXT,
+    p_message_hash TEXT
+) RETURNS BOOLEAN AS $$
+BEGIN
+    RETURN EXISTS (
+        SELECT 1 FROM message_queue
+        WHERE sender_id = p_sender_id
+        AND message_hash = p_message_hash
+        AND created_at > NOW() - INTERVAL '10 minutes'
+    );
+END;
+$$ LANGUAGE plpgsql;
+```
+
+---
+
+### ❓ سوال ۵: پل رایگان با وب‌هوک تلگرام
+
+#### معماری Bridge تلگرام → اینستاگرام
+
+```
+┌──────────────────────────────────────────────────────┐
+│                TELEGRAM BRIDGE ARCHITECTURE           │
+└──────────────────────────────────────────────────────┘
+
+[اینستاگرام کامنت/DM]
+         │
+         ▼
+[Zernio/SocialAPI.ai Webhook]
+         │
+         ▼
+[Vercel: /api/webhook/instagram]
+         │
+         ├── ذخیره در Supabase
+         │
+         └── ارسال به Telegram Bot شما
+                   │
+                   ▼
+         [پنل مدیریت تلگرام شما]
+         شما پیام را می‌بینید و:
+         - تأیید می‌کنید → پاسخ AI ارسال می‌شود
+         - ویرایش می‌کنید → پاسخ ویرایش‌شده ارسال می‌شود
+         - بلاک می‌کنید → sender بلاک می‌شود
+         - نادیده می‌گیرید → پیام بسته می‌شود
+```
+
+**پیاده‌سازی Telegram Notification:**
+
+```python
+# در webhook handler، بعد از ذخیره در صف:
+async def notify_telegram_admin(msg: dict, ai_reply: str):
+    bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
+    admin_chat_id = os.getenv("TELEGRAM_ADMIN_CHAT_ID")
+    
+    keyboard = {
+        "inline_keyboard": [
+            [
+                {"text": "✅ تأیید و ارسال", "callback_data": f"approve_{msg['id']}"},
+                {"text": "✏️ ویرایش", "callback_data": f"edit_{msg['id']}"},
+            ],
+            [
+                {"text": "🚫 بلاک کاربر", "callback_data": f"block_{msg['id']}"},
+                {"text": "❌ رد کن", "callback_data": f"reject_{msg['id']}"},
+            ]
+        ]
+    }
+    
+    message = f"""
+📥 **پیام جدید اینستاگرام**
+━━━━━━━━━━━━━━━━━
+👤 **از:** `{msg['sender_id']}`
+📝 **نوع:** {msg['event_type']}
+💬 **پیام:** {msg['message_text']}
+━━━━━━━━━━━━━━━━━
+🤖 **پیشنهاد AI:**
+{ai_reply}
+    """
+    
+    async with httpx.AsyncClient() as client:
+        await client.post(
+            f"https://api.telegram.org/bot{bot_token}/sendMessage",
+            json={
+                "chat_id": admin_chat_id,
+                "text": message,
+                "parse_mode": "Markdown",
+                "reply_markup": keyboard
+            }
+        )
+```
+
+**این معماری:**
+- ✅ کاملاً رایگان (Telegram Bot API رایگان است)
+- ✅ بدون سرور همیشه‌روشن
+- ✅ کنترل کامل بر پاسخ‌ها
+- ✅ می‌توانید اسپم را از تلگرام بلاک کنید
+- ✅ لاگ کامل در Supabase
+
+---
+
+## 🏗️ معماری نهایی پیشنهادی (بهترین گزینه)
+
+### استراتژی ترکیبی دو سرویس
+
+```
+MONTH DAYS 1-25 (مصرف کم):
+├── Zernio Inbox Webhook → Vercel → [Filter] → Supabase → Gemini → Zernio Reply
+└── هزینه: $0 (زیر ۱۰k پیام)
+
+MONTH DAYS 26-30 (نزدیک به ۱۰k):
+├── هشدار Supabase وقتی به ۸k رسیدیم
+├── Switch به حالت "تأیید دستی" از تلگرام
+└── فقط پیام‌های High Priority پاسخ می‌گیرند
+
+اگر از ۱۰k گذشتیم:
+├── Option A: SocialAPI.ai برای ۵۰ پاسخ مهم (رایگان)
+├── Option B: $1 دلار بدیم برای ۱۰k پیام بعدی (ارزان!)
+└── Option C: بقیه ماه = فقط حالت خواندن + ذخیره در صف
+```
+
+### فایل‌های مورد نیاز پروژه
+
+```
+project/
+├── api/
+│   ├── webhook/
+│   │   └── instagram.py      # دریافت webhook از Zernio/SocialAPI.ai
+│   ├── process-queue.py       # پردازش صف + Gemini + ارسال
+│   ├── telegram-callback.py   # پردازش callback‌های تلگرام
+│   └── admin/
+│       ├── stats.py           # آمار مصرف
+│       └── block.py           # مدیریت بلاک‌لیست
+├── lib/
+│   ├── spam_filter.py         # فیلتر اسپم
+│   ├── queue_manager.py       # مدیریت صف
+│   ├── zernio_client.py       # کلاینت Zernio
+│   ├── socialapi_client.py    # کلاینت SocialAPI.ai
+│   └── gemini_client.py       # کلاینت Gemini
+├── vercel.json                # تنظیمات Vercel + Cron
+└── requirements.txt
+```
+
+**vercel.json:**
+```json
+{
+  "crons": [
+    {
+      "path": "/api/process-queue",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/admin/stats",
+      "schedule": "0 9 * * *"
+    }
+  ],
+  "functions": {
+    "api/**/*.py": {
+      "runtime": "python3.12",
+      "maxDuration": 30
+    }
+  }
+}
+```
+
+---
+
+## 💰 جدول هزینه ماهانه پیش‌بینی‌شده
+
+| سرویس | پلن | هزینه | محدودیت |
+|-------|-----|-------|---------|
+| **Vercel** | Hobby | $0 | Serverless Functions رایگان |
+| **Supabase** | Free | $0 | 500MB DB, 50k API calls |
+| **Zernio** | Free (2 account) | $0 | ۱۰k پیام ارسال/ماه |
+| **SocialAPI.ai** | Hobby | $0 | ۵۰ تعامل ارسال، خواندن نامحدود |
+| **Gemini Flash 2.0** | Free Tier | $0 | 1M token/دقیقه رایگان |
+| **Telegram Bot API** | رایگان | $0 | بدون محدودیت |
+| **مجموع** | | **$0/ماه** | |
+
+> ⚠️ **بدترین سناریو:** اگر از ۱۰k پیام/ماه عبور کنید = **$1 دلار برای هر ۱۰k پیام اضافی**. این یعنی حتی با ۵۰k پیام/ماه فقط **$4 دلار** می‌پردازید!
+
+---
+
+## 🚦 چک‌لیست پیاده‌سازی مرحله‌به‌مرحله
+
+```
+[ ] مرحله ۱: راه‌اندازی SocialAPI.ai (15 دقیقه)
+    [ ] ثبت‌نام در social-api.ai (با VPN)
+    [ ] اتصال اینستاگرام @zeynalikids
+    [ ] ثبت Webhook URL: https://your-app.vercel.app/api/webhook/instagram
+    [ ] دریافت API Key
+
+[ ] مرحله ۲: ساخت جداول Supabase (10 دقیقه)
+    [ ] اجرای SQL Schema بالا
+    [ ] تنظیم RLS policies
+    [ ] ایجاد pg_cron برای cleanup
+
+[ ] مرحله ۳: دیپلوی Vercel Functions (30 دقیقه)
+    [ ] webhook/instagram.py
+    [ ] process-queue.py
+    [ ] telegram-callback.py
+    [ ] تنظیم Environment Variables
+
+[ ] مرحله ۴: تنظیم متغیرهای محیطی
+    [ ] SUPABASE_URL + SUPABASE_KEY
+    [ ] ZERNIO_API_KEY (برای ارسال)
+    [ ] SOCIALAPI_KEY (backup)
+    [ ] GEMINI_API_KEY
+    [ ] TELEGRAM_BOT_TOKEN
+    [ ] TELEGRAM_ADMIN_CHAT_ID
+    [ ] WEBHOOK_SECRET
+
+[ ] مرحله ۵: تست و مانیتورینگ
+    [ ] ارسال پیام آزمایشی به اینستاگرام
+    [ ] بررسی Supabase برای ذخیره پیام
+    [ ] بررسی دریافت notification تلگرام
+    [ ] تست ارسال پاسخ
+
+[ ] مرحله ۶: بهینه‌سازی Spam Filter
+    [ ] شناسایی الگوهای اسپم رایج در @zeynalikids
+    [ ] اضافه کردن کلمات کلیدی به لیست بلاک
+    [ ] تنظیم rate limit بر اساس آمار واقعی
+```
+
+---
+
+## ⚠️ ریسک‌ها و راه‌حل‌ها
+
+| ریسک | احتمال | راه‌حل |
+|------|--------|--------|
+| SocialAPI.ai سرویس را قطع کند | کم | Fallback به Zernio (که الان دارید) |
+| Zernio از ۱۰k عبور کند | متوسط | مدیریت صف هوشمند + $1 fallback |
+| Gemini rate limit | کم | استفاده از Mistral رایگان به عنوان backup |
+| Vercel timeout (30s) | متوسط | Process در batch‌های کوچک |
+| IP ایران بلاک شود | کم | سرور Vercel IP ایرانی ندارد |
+
+---
+
+## 📚 منابع و لینک‌ها
+
+| منبع | لینک |
+|------|------|
+| SocialAPI.ai Free Plan | https://social-api.ai |
+| SocialAPI.ai Webhook Docs | https://social-api.ai/blog/social-listening-webhooks |
+| Zernio Instagram API | https://zernio.com/instagram |
+| Zernio Pricing | https://zernio.com/blog/api-to-post-to-instagram |
+| Free Social Media API 2026 | https://social-api.ai/blog/free-social-media-api-2026 |
+| Gemini Flash 2.0 Free Tier | https://ai.google.dev/pricing |
+| Vercel Cron Jobs | https://vercel.com/docs/cron-jobs |
+| Supabase Free Plan | https://supabase.com/pricing |
+| مقایسه کامل APIها ۲۰۲۶ | https://postproxy.dev/blog/best-social-media-scheduling-apis-compared |
+
+---
+
+*آخرین بروزرسانی: اکتبر ۲۰۲۶ — بر اساس جستجوی مستقیم در صفحات قیمت‌گذاری و داکیومنت‌های رسمی*
+```
+
+---
+
+## خلاصه پاسخ‌های مستقیم به سوالات شما:
+
+**۱. جایگزین ChatbotX:**
+بهترین گزینه **SocialAPI.ai Hobby Plan** است — رایگان، بدون کارت اعتباری، با همان پلتفرم‌ها و قابلیت‌های نسخه‌های پولی. خواندن پیام‌ها (DM، کامنت) کاملاً نامحدود و رایگان است. تنها ارسال پاسخ‌ها به ۵۰ تعامل/ماه محدود است.
+
+**۲. اتصال بدون اپ متا:**
+از طریق Zernio می‌توانید کامنت‌ها را بخوانید، پاسخ دهید، پنهان کنید و مدیریت کنید — هر event کامنت از طریق Normalized Webhook ارسال می‌شود و نیازی به polling ندارید.
+
+**۳. وضعیت Ayrshare:**
+در ۲۰۲۶، Ayrshare چهار پلن دارد: Premium $149/ماه، Launch $299/ماه، Business $599/ماه، و Enterprise. هیچ پلن رایگان دائمی وجود ندارد، فقط ۲۸ روز trial.
+
+**۴. وضعیت Publer:**
+Publer هیچ Social Inbox ندارد — مدیریت کامنت/DM از Publer ممکن نیست. API نیز فقط در Business plan ($21+/ماه) در دسترس است.
+
+**۵. کنترل زیر ۱۰k پیام:**
+طبق مستندات Zernio در میانه ۲۰۲۶، ارسال Inbox بعد از ۱۰,۰۰۰ پیام/ماه به صورت متری اضافه می‌شود. با مدیریت صف هوشمند در Supabase و لایه‌های فیلتر اسپم، می‌توان مصرف را کنترل کرد.
